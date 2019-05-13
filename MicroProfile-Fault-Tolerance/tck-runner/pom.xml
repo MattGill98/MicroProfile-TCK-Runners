@@ -96,6 +96,19 @@
                     </suiteXmlFiles>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.soebes.maven.plugins</groupId>
+                <artifactId>echo-maven-plugin</artifactId>
+                <version>0.3.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>echo</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -113,6 +126,19 @@
                 <microprofile.fault-tolerance.tck.version>1.1.1.payara-p2</microprofile.fault-tolerance.tck.version>
                 <microprofile.fault-tolerance.tck.suite>stable-no-ext-libs-tck-suite.xml</microprofile.fault-tolerance.tck.suite>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.soebes.maven.plugins</groupId>
+                        <artifactId>echo-maven-plugin</artifactId>
+                        <configuration>
+                            <echos>
+                                <echo>Fault Tolerance 1.1</echo>
+                            </echos>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>mp-ft-2.0</id>
@@ -127,153 +153,18 @@
                 <microprofile.fault-tolerance.tck.version>2.0</microprofile.fault-tolerance.tck.version>
                 <microprofile.fault-tolerance.tck.suite>tck-suite2.0.xml</microprofile.fault-tolerance.tck.suite>
             </properties>
-        </profile>
-        <profile>
-            <id>unstable</id>
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <groupId>com.soebes.maven.plugins</groupId>
+                        <artifactId>echo-maven-plugin</artifactId>
                         <configuration>
-                            <suiteXmlFiles>
-                                <suiteXmlFile>${basedir}/src/test/resources/no-ext-libs-tck-suite.xml</suiteXmlFile>
-                            </suiteXmlFiles>
+                            <echos>
+                                <echo>Fault Tolerance 2.0</echo>
+                            </echos>
                         </configuration>
                     </plugin>
                 </plugins>
-            </build>
-        </profile>
-    
-        <profile>
-            <id>payara-server-managed</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <!-- Copy the Payara artifact into the target directory -->
-                    <plugin>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                    </plugin>
-                    <!-- Run the integration tests against the remote server -->
-                    <plugin>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <environmentVariables>
-                                <GLASSFISH_HOME>${payara.path}</GLASSFISH_HOME>
-                            </environmentVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-                <testResources>
-                    <testResource>
-                        <directory>src/test/resources</directory>
-                        <filtering>true</filtering>
-                    </testResource>
-                    <testResource>
-                        <directory>src/test/resources-glassfish-remote</directory>
-                        <filtering>true</filtering>
-                    </testResource>
-                </testResources>
-            </build>
-        </profile>
-
-        <profile>
-            <id>payara-server-remote</id>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <javaEEServer>payara-remote</javaEEServer>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                </plugins>
-                <testResources>
-                    <testResource>
-                        <directory>src/test/resources</directory>
-                        <filtering>true</filtering>
-                    </testResource>
-                    <testResource>
-                        <directory>src/test/resources-glassfish-remote</directory>
-                        <filtering>true</filtering>
-                    </testResource>
-                </testResources>
-            </build>
-        </profile>
-
-        <profile>
-            <id>payara-server-remote-ext-libs</id>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <javaEEServer>payara-remote</javaEEServer>
-                            </systemPropertyVariables>
-                            <suiteXmlFiles>
-                                <suiteXmlFile>${basedir}/src/test/resources/tck-suite.xml</suiteXmlFile>
-                            </suiteXmlFiles>
-                        </configuration>
-                    </plugin>
-                </plugins>
-                <testResources>
-                    <testResource>
-                        <directory>src/test/resources</directory>
-                        <filtering>true</filtering>
-                    </testResource>
-                    <testResource>
-                        <directory>src/test/resources-glassfish-remote</directory>
-                        <filtering>true</filtering>
-                    </testResource>
-                </testResources>
-            </build>
-        </profile>
-
-        <profile>
-            <id>payara-micro-managed</id>
-
-            <build>
-                <plugins>
-                    <!-- Download Payara Micro and copy to target directory -->
-                    <plugin>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                    </plugin>
-                    <!-- Configure Payara Micro Runtime -->
-                    <plugin>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <environmentVariables>
-                                <MICRO_JAR>${payara.micro.path}</MICRO_JAR>
-                                <EXTRA_MICRO_OPTIONS>--prebootcommandfile ${basedir}/micro-pre-boot-commands.txt</EXTRA_MICRO_OPTIONS>
-                            </environmentVariables>
-                            <suiteXmlFiles>
-                                <suiteXmlFile>${basedir}/src/test/resources/no-ext-libs-tck-suite.xml</suiteXmlFile>
-                            </suiteXmlFiles>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>payara-server-embedded</id>
-            <build>
-                <testResources>
-                    <testResource>
-                        <directory>src/test/resources</directory>
-                        <filtering>true</filtering>
-                    </testResource>
-                    <testResource>
-                        <directory>src/test/resources-glassfish-embedded</directory>
-                        <filtering>true</filtering>
-                    </testResource>
-                </testResources>
             </build>
         </profile>
     </profiles>
